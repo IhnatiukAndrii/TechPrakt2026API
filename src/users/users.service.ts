@@ -2,33 +2,47 @@ import { type User } from './interfaces/user.interface';
 import { type PatchUserDto } from './dto/patch-user.dto';
 import { type CreateUserDto } from './dto/create-user.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Role } from './enums/role.enum';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-    private users = [
+    private users: User[] = [
         {
             id: '0',
-            name: 'user0'
+            name: 'user0',
+            passwordHash: '1',
+            role: Role.USER,
         },
         {
             id: '1',
-            name: 'user1'
+            name: 'user1',
+            passwordHash: '1',
+            role: Role.USER,
         },
         {
             id: '2',
-            name: 'user2'
+            name: 'user2',
+            passwordHash: '1',
+            role: Role.USER,
         },
         {
             id: '3',
-            name: 'user3'
+            name: 'user3',
+            passwordHash: '1',
+            role: Role.USER,
         },
         {
             id: '4',
-            name: 'user4'
+            name: 'user4',
+            passwordHash: '1',
+            role: Role.USER,
         },
         {
             id: '5',
-            name: 'user5'
+            name: 'user5',
+            passwordHash: '1',
+            role: Role.USER,
         },
     ]
 
@@ -46,15 +60,29 @@ export class UsersService {
         return user
     }
 
-    createUser(dto: CreateUserDto): User {
-        const { name } = dto
+    getLastUserId(): string {
+        return this.users[this.users.length - 1].id
+    }
 
-        // create user in db
+    async createUser(dto: CreateUserDto): Promise<User> {
+        const { name, password } = dto
 
-        return {
-            id: "10",
-            name: name
+        const saltRounds = 10;
+        const passwordHash = await bcrypt.hash(password, saltRounds);
+
+        const lastId = this.getLastUserId()
+        const userId = Number(lastId) + 1
+
+        const user: User = {
+            id: String(userId),
+            name: name,
+            passwordHash: passwordHash,
+            role: Role.USER
         }
+
+        this.users.push(user)
+
+        return user
     }
 
     deleteUser(userId: string): User {
@@ -82,8 +110,20 @@ export class UsersService {
 
         return {
             'id': user.id,
-            'name': name
+            'name': name,
+            'passwordHash': user.passwordHash,
+            'role': user.role,
         }
+    }
+
+    async getUserByName(name: string): Promise<User> {
+        const user = this.users.find((user) => user.name === name)
+
+        if (!user) {
+            throw new NotFoundException('User is not found')
+        }
+
+        return user
     }
 
 }
