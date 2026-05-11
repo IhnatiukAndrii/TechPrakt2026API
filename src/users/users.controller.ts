@@ -1,37 +1,39 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { AppService } from './app.service';
+import { UsersService } from './users.service';
 import { type User } from './interfaces/user.interface';
-import { CreateUserDto } from './dto/create-user.dto';
 import { PatchUserDto } from './dto/patch-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
-export class AppController {
-    constructor(private readonly appService: AppService) { }
+export class UsersController {
+    constructor(
+        private readonly usersService: UsersService
+    ) { }
 
     @Get()
     getUsers(): User[] {
-        return this.appService.getUsers()
+        return this.usersService.getUsers()
     }
 
     @Get(':userId')
     getUser(
         @Param('userId') userId: string
     ): User {
-        return this.appService.getUser(userId)
+        return this.usersService.getUser(userId)
     }
 
     @Post()
     createUser(
         @Body() dto: CreateUserDto
     ): User {
-        return this.appService.createUser(dto)
+        return this.usersService.createUser(dto)
     }
 
     @Delete(':userId')
     deleteUser(
         @Param('userId') userId: string
     ): User {
-        return this.appService.deleteUser(userId)
+        return this.usersService.deleteUser(userId)
     }
 
     @Patch(':userId')
@@ -39,7 +41,6 @@ export class AppController {
         @Param('userId') userId: string,
         @Body() dto: PatchUserDto
     ): User {
-        return this.appService.patchUser(userId, dto)
+        return this.usersService.patchUser(userId, dto)
     }
-
 }

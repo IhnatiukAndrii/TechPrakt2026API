@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
 import { type User } from './interfaces/user.interface';
-import { type CreateUserDto } from './dto/create-user.dto';
 import { type PatchUserDto } from './dto/patch-user.dto';
+import { type CreateUserDto } from './dto/create-user.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
-export class AppService {
+export class UsersService {
     private users = [
         {
             id: '0',
@@ -85,4 +85,5 @@ export class AppService {
             'name': name
         }
     }
+
 }
